@@ -1,3 +1,15 @@
+# utils.py
+
+"""
+utils.py
+
+This module contains utility functions for preprocessing images and making predictions using a pre-trained CNN model.
+
+Author: Bouchaib Khribech
+Version: 1.0
+Date: December 2024
+"""
+
 import numpy as np
 import tensorflow as tf
 from PIL import Image
