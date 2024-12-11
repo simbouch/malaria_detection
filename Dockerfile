@@ -1,25 +1,29 @@
-# Use an official Python image as the base image
+# Use a lightweight Python base image
 FROM python:3.9-slim
 
-# Set the working directory in the container
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set the working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install necessary system dependencies and clean up
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1-mesa-glx \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy the application files to the container
-COPY . /app
+# Copy the requirements file first to optimize Docker caching
+COPY requirements.txt /app/
 
-# Install Python dependencies
+# Install Python dependencies without cache
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the port the app runs on
-EXPOSE 5000
+# Copy the rest of the application code
+COPY . /app
 
-# Command to run the application
-CMD ["gunicorn", "-b", "0.0.0.0:80", "main:app"]
+# Expose the application port
+EXPOSE 80
 
-
-
+# Start the application using Gunicorn with optimized settings
+CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "2", "--threads", "4", "app:app"]
