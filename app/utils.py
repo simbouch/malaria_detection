@@ -35,4 +35,4 @@ def predict(file):
     """
     processed_image = preprocess_image(file)
     prediction = model.predict(processed_image)
-    return "Parasitée" if prediction[0][0] < 0.5 else "Saine"
+    return "Saine" if prediction[0][0] < 0.5 else "Parasitée"
